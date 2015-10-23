@@ -23,7 +23,7 @@
   </scm>
 
     <properties>
-        <dropwizard-hello-world-api.version>1.1</dropwizard-hello-world-api.version>
+        <dropwizard-hello-world-api.version>1.2-SNAPSHOT</dropwizard-hello-world-api.version>
     </properties>
 
     <dependencies>
