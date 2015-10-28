@@ -3,6 +3,7 @@ package no.cantara.dwsample.client;
 import no.cantara.dwsample.api.HelloWorldResource;
 import no.cantara.dwsample.api.Planet;
 import no.cantara.dwsample.api.Saying;
+import no.cantara.dwsample.api.SpecificPlanet;
 
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.ServerErrorException;
@@ -14,7 +15,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.Optional;
 
 public class HelloWorldResourceClient implements HelloWorldResource {
@@ -68,6 +71,31 @@ public class HelloWorldResourceClient implements HelloWorldResource {
         if (Response.Status.Family.SUCCESSFUL.equals(statusInfo.getFamily())) {
             Saying saying = response.readEntity(Saying.class);
             return saying;
+        }
+        if (Response.Status.Family.CLIENT_ERROR.equals(statusInfo.getFamily())) {
+            throw new ClientErrorException(statusInfo.getStatusCode());
+        }
+        if (Response.Status.Family.SERVER_ERROR.equals(statusInfo.getFamily())) {
+            throw new ServerErrorException(statusInfo.getStatusCode());
+        }
+        throw new RuntimeException("Request failed with status " + statusInfo.getStatusCode());
+    }
+
+    @Override
+    public SpecificPlanet helloSpecificPlanet(String id) {
+        String urlEncodedId;
+        try {
+            urlEncodedId = URLEncoder.encode(id, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        WebTarget helloWorldTarget = this.helloWorldTarget.path(HelloWorldResource.PATH_SPECIFIC_PLANET + "/" + urlEncodedId);
+        Invocation.Builder invocationBuilder = helloWorldTarget.request(MediaType.APPLICATION_JSON_TYPE);
+        Response response = invocationBuilder.get();
+        Response.StatusType statusInfo = response.getStatusInfo();
+        if (Response.Status.Family.SUCCESSFUL.equals(statusInfo.getFamily())) {
+            SpecificPlanet specificPLanet = response.readEntity(SpecificPlanetImpl.class);
+            return specificPLanet;
         }
         if (Response.Status.Family.CLIENT_ERROR.equals(statusInfo.getFamily())) {
             throw new ClientErrorException(statusInfo.getStatusCode());

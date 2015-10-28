@@ -3,6 +3,7 @@ package no.cantara.dwsample.client;
 import no.cantara.dwsample.api.HelloWorldResource;
 import no.cantara.dwsample.api.Planet;
 import no.cantara.dwsample.api.Saying;
+import no.cantara.dwsample.api.SpecificPlanet;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -18,6 +19,9 @@ public class HelloWorldResourceClientTest {
         }
         public Saying hello(Planet planet) {
             return new Saying(1, "Hello you " + planet.getYourName() + " of " + planet.getPlanetName());
+        }
+        public SpecificPlanet helloSpecificPlanet(String id) {
+            return new SpecificPlanetImpl(new Planet("Mercury", "John"));
         }
     }
 
@@ -36,5 +40,12 @@ public class HelloWorldResourceClientTest {
         HelloWorldResourceClient helloWorldResourceClient = new HelloWorldResourceClient(dropwizard.baseUri());
         Saying saying = helloWorldResourceClient.hello(new Planet("Pluto", "Mr. Grinch"));
         assertEquals(new Saying(1, "Hello you Mr. Grinch of Pluto"), saying);
+    }
+
+    @Test
+    public void thatHelloSpecificPlanetGetRequestIsBuiltCorrectly() {
+        HelloWorldResourceClient helloWorldResourceClient = new HelloWorldResourceClient(dropwizard.baseUri());
+        SpecificPlanet specificPlanet = helloWorldResourceClient.helloSpecificPlanet("any-id");
+        assertEquals(new SpecificPlanetImpl(new Planet("Mercury", "John")), specificPlanet);
     }
 }
