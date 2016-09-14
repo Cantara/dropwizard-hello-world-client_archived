@@ -21,6 +21,14 @@
         <url>https://github.com/Cantara/dropwizard-hello-world-client</url>
       <tag>HEAD</tag>
   </scm>
+    <repositories>
+        <!-- Needed for parent  -->
+        <repository>
+            <id>cantara</id>
+            <name>Cantara Release Repository</name>
+            <url>http://mvnrepo.cantara.no/content/repositories/releases/</url>
+        </repository>
+    </repositories>
 
     <properties>
         <dropwizard-hello-world-api.version>1.2-SNAPSHOT</dropwizard-hello-world-api.version>
